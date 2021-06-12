@@ -79,4 +79,13 @@ public class NoticeController {
 		}
 		return new ResponseEntity<String>(FAIL, HttpStatus.NO_CONTENT);
 	}
+    
+    @ApiOperation(value = "공지사항 날짜순 5개만 반환한다.", response = List.class)
+    @GetMapping("/main")
+    public ResponseEntity<List<Notice>>  briefNotice() throws Exception {
+       logger.debug("briefNotice - 호출");
+       return new ResponseEntity<List<Notice>>(noticeService.briefNotice(), HttpStatus.OK);
+    }
+    
+    
 }

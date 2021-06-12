@@ -47,13 +47,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Member login(Member member) throws Exception {
-		// TODO Auto-generated method stub
 		return sqlSession.getMapper(MemberDAO.class).login(member);
 	}
 
 	@Override
 	public String getServerInfo() {
-		// TODO Auto-generated method stub
 		return "강철부대";
+	}
+
+	@Override
+	public int updatePassword(Member member) {
+		return sqlSession.getMapper(MemberDAO.class).updatePassword(member);
 	}
 }

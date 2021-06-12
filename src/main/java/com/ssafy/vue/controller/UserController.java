@@ -9,12 +9,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.mail.HtmlEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.vue.dto.Member;
 import com.ssafy.vue.service.JwtService;
@@ -126,4 +135,84 @@ public class UserController {
 		
 		return new ResponseEntity<Member>(userService.userInfo(resultMap.get("userid")), HttpStatus.OK);
 	}
+	
+
+	   @PostMapping("/find")
+	   public ResponseEntity<String> findPassword(@RequestBody Member member) throws Exception{
+	      
+	      Member check = userService.userInfo(member.getUserid());
+	      
+	      if(check == null) {
+	         return new ResponseEntity<String>("존재하는 아이디가 없습니다.", HttpStatus.NO_CONTENT);
+	      }
+	      else if(!member.getEmail().equals(check.getEmail())) {
+	         return new ResponseEntity<String>("이메일이 일치하지 않습니다.", HttpStatus.NO_CONTENT);
+	      }
+	      else {
+	         String temp = "";
+	         for(int i = 0; i<12; i++) {
+	            temp += (char) ((Math.random() * 26) + 97);
+	         }
+	         
+	         member.setUserpwd(temp);
+	         userService.updatePassword(member);
+	         
+	         sendEmail(member, "findPassword");
+	         
+	         return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+
+	            
+	      }
+	   }
+	   
+	   public void sendEmail(Member member, String str) throws Exception {
+	      // Mail Server 설정
+	      String charSet = "utf-8";
+	      String hostSMTP = "smtp.naver.com"; //네이버 이용시 smtp.naver.com
+	      String hostSMTPid = "the99331122";
+	      String hostSMTPpwd = "an2383";
+
+	      // 보내는 사람 EMail, 제목, 내용
+	      String fromEmail = "the99331122@naver.com";
+	      String fromName = "Happy House With Two Impostors Among Us";
+	      String subject = "";
+	      String msg = "";
+
+	      if(str.equals("findPassword")) {
+	         subject = "HappyHouse with two Impostors among us Temporary Password";
+	         msg += "<div align='center' style='border:1px solid black; font-family:verdana'>";
+	         msg += "<h3 style='color: blue;'>";
+	         msg += member.getUserid() + "님의 임시 비밀번호 입니다. 비밀번호를 변경하여 사용하세요.</h3>";
+	         msg += "<p>임시 비밀번호 : ";
+	         msg += member.getUserpwd() + "</p></div>";
+	      }
+	      System.out.println(subject);
+	      System.out.println(msg);
+	      // 받는 사람 E-Mail 주소
+	      String mail = member.getEmail();
+	      try {
+	         HtmlEmail email = new HtmlEmail();
+	         email.setDebug(true);
+	         email.setCharset(charSet);
+	         email.setSSL(true);
+	         email.setHostName(hostSMTP);
+	         email.setSmtpPort(465); //네이버 이용시 587
+
+	         email.setAuthentication(hostSMTPid, hostSMTPpwd);
+	         email.setTLS(true);
+	         email.addTo(mail, charSet);
+	         email.setFrom(fromEmail, fromName, charSet);
+	         email.setSubject(subject);
+	         email.setHtmlMsg(msg);
+	         email.send();
+	      } catch (Exception e) {
+	         System.out.println("메일발송 실패 : " + e);
+	      }
+	   }
+	   
+	   
+	
+	
+	
+	
 }

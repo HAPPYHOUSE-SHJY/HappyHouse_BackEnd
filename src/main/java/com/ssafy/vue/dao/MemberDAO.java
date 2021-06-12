@@ -16,4 +16,5 @@ public interface MemberDAO {
 	public int userRegister(Member memberDto);
 	public int userModify(Member memberDto);
 	public int userDelete(String userid);
+	public int updatePassword(Member member);
 }

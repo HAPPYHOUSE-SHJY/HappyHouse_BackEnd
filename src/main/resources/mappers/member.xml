@@ -29,7 +29,7 @@
 	
 	<update id="userModify" parameterType="member">
 		update user
-		set email = #{email}, address = #{address}
+		set email = #{email}, address = #{address}, userpwd = #{userpwd}
 		where userid = #{userid}
 	</update>
 	
@@ -37,5 +37,10 @@
 		delete from user
 		where userid = #{userid}
 	</delete>
+	
+	<update id="updatePassword" parameterType="member">
+      update user
+      set userpwd = #{userpwd} where userid = #{userid}
+   </update>
 	
 </mapper>

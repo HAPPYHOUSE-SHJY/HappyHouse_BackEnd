@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.vue.dao.AptAroundDAO">
+
+	<!-- 동으로 주변환경 정보조회 -->
+	<select id="selectEnvInfoByDong" parameterType="String" resultType="EnvirInfoDto">
+		select name, scode, sname, chkspec, locaddr
+		from envirinfo
+		where sigungu = #{sidogugun}
+		and locaddr like CONCAT('%', #{dong}, '%');
+	</select>
+	
+	<!-- 동으로 주변상가 정보조회 -->
+	<select id="selectStoreInfoByDong" parameterType="String" resultType="StoreInfoDto">
+		select name, section, gu, dong, address
+		from shopinfo
+		where gu = #{gu} 
+		and dong = #{dong}
+	</select>
+	
+	<!-- 군으로 주변병원 정보조회 -->
+	<select id="selectHospitalByGugun" parameterType="String" resultType="HospitalDto">
+		select name, address, tel
+		from hospital
+		where sido = left(#{sido},2)
+		and gugun = #{gugun};
+	</select>
+	
+	<!-- 군으로 주변 코로나선별진료소 정보조회 -->
+	<select id="selectCoronaClinicByGugun" parameterType="String" resultType="CoronaClinicDto">
+		select hospitalName, address, weekDayOp, satOp, sunOp, tel
+		from coronaclinic
+		where sido = left(#{sido},2)
+		and gungu = #{gugun};
+	</select>
+	
+</mapper>
+

@@ -10,4 +10,5 @@ public interface NoticeService {
 	public boolean writeNotice(Notice notice);
 	public boolean updateNotice(Notice notice);
 	public boolean deleteNotice(int no);
+	public List<Notice> briefNotice();
 }

@@ -41,4 +41,11 @@ public class NoticeServiceImpl implements NoticeService {
 	public boolean deleteNotice(int no) {
 		return noticeDao.deleteNotice(no) == 1;
 	}
+
+	@Override
+	public List<Notice> briefNotice() {
+		return noticeDao.briefNotice();
+	}
+	
+	
 }
